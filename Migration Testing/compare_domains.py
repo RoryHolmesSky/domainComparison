@@ -8,7 +8,6 @@ import os
 
 from pandas.core.indexes.base import Index
  
-
 def add_domain_level_sheet(old, new, dom):
     old_instance = pd.read_excel(old, engine = 'openpyxl')
     new_instance = pd.read_excel(new, engine = 'openpyxl')
