@@ -5,7 +5,6 @@ import openpyxl
 from openpyxl.styles.fills import PatternFill
 from openpyxl.styles import Font, colors
 import os
-
 from pandas.core.indexes.base import Index
  
 
@@ -123,7 +122,6 @@ def add_domain_level_sheet(old, new, dom):
                                 numTables = 0
                                 schemaNames = []
                                 tableNames = []
-                    print (df_merged)
                     try:
                         for i in range(len(df_merged)):
                             if df_merged['Asset Type'].iloc[i] == 'Schema':
