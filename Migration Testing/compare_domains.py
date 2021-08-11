@@ -8,8 +8,6 @@ import os
 
 from pandas.core.indexes.base import Index
  
-#commit test
-#new test
 
 def add_domain_level_sheet(old, new, dom):
     old_instance = pd.read_excel(old, engine = 'openpyxl')
@@ -42,12 +40,12 @@ def add_domain_level_sheet(old, new, dom):
         all_columns = (old_instance.columns[:-1])
         for col in all_columns:
             columns.append(col)
-        #old_instance = old_instance.sort_values(by=columns)
+        old_instance = old_instance.sort_values(by=columns)
         columns = []
         all_columns = (new_instance.columns[:-1])
         for col in all_columns:
             columns.append(col)
-        #new_instance = new_instance.sort_values(by=columns)
+        new_instance = new_instance.sort_values(by=columns)
         df_merged = old_instance.merge(new_instance, how = 'outer' ,indicator=True)
         numTested = len(df_merged)
         df_merged['_merge'] = df_merged['_merge'].replace(['both','left_only','right_only'],['in both instances', 'old_instance_only', 'new_instance_only'])
