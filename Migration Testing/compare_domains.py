@@ -41,12 +41,12 @@ def add_domain_level_sheet(old, new, dom):
         all_columns = (old_instance.columns[:-1])
         for col in all_columns:
             columns.append(col)
-        old_instance = old_instance.sort_values(by=columns)
+        #old_instance = old_instance.sort_values(by=columns)
         columns = []
         all_columns = (new_instance.columns[:-1])
         for col in all_columns:
             columns.append(col)
-        new_instance = new_instance.sort_values(by=columns)
+        #new_instance = new_instance.sort_values(by=columns)
         df_merged = old_instance.merge(new_instance, how = 'outer' ,indicator=True)
         numTested = len(df_merged)
         df_merged['_merge'] = df_merged['_merge'].replace(['both','left_only','right_only'],['in both instances', 'old_instance_only', 'new_instance_only'])
@@ -58,14 +58,14 @@ def add_domain_level_sheet(old, new, dom):
             for col in all_columns:
                 columns.append(col)
             df_merged = df_merged.sort_values(by=columns)
-            book = openpyxl.load_workbook('domain_differences.xlsx')
+            book = openpyxl.load_workbook('Migration Testing/domain_differences.xlsx')
             if dom in book.sheetnames:
                 print ("sheet deleted")
                 book.remove(book[dom])
-            book.save('domain_differences.xlsx')
+            book.save('Migration Testing/domain_differences.xlsx')
             book.close()
-            book = openpyxl.load_workbook('domain_differences.xlsx')
-            writer = pd.ExcelWriter('domain_differences.xlsx', engine='openpyxl')
+            book = openpyxl.load_workbook('Migration Testing/domain_differences.xlsx')
+            writer = pd.ExcelWriter('Migration Testing/domain_differences.xlsx', engine='openpyxl')
             writer.book = book
             writer.sheets = dict((ws.title, ws) for ws in book.worksheets)
             df_merged.to_excel(writer, sheet_name=dom, index = False)
@@ -75,11 +75,11 @@ def add_domain_level_sheet(old, new, dom):
             if num_of_pairs == 0:
                 width = df_merged.shape[1]
                 for wid in range(width):
-                    excel_path = openpyxl.load_workbook('C:/Users/RHS18/Documents/Collibra/Migration Testing/domain_differences.xlsx')
+                    excel_path = openpyxl.load_workbook('C:/Users/RHS18/Documents/gitHubSky/domainComparison/Migration Testing/domain_differences.xlsx')
                     currentSheet1 = excel_path[dom]
                     redFill = PatternFill(patternType='solid', fgColor=colors.Color(rgb='00FF0000'))
                     currentSheet1.cell(row=2, column=wid+1).fill = redFill
-                    excel_path.save(filename='C:/Users/RHS18/Documents/Collibra/Migration Testing/domain_differences.xlsx')
+                    excel_path.save(filename='C:/Users/RHS18/Documents/gitHubSky/domainComparison/Migration Testing/domain_differences.xlsx')
                     result = "FAIL"
                     rowsFailed = 1
                     numSchemas = 0
@@ -105,7 +105,7 @@ def add_domain_level_sheet(old, new, dom):
                         tableNames = str(tableNames).replace("[", "").replace("]","")
             else:
                 print (num_of_pairs)
-                excel_path = openpyxl.load_workbook('C:/Users/RHS18/Documents/Collibra/Migration Testing/domain_differences.xlsx')
+                excel_path = openpyxl.load_workbook('C:/Users/RHS18/Documents/gitHubSky/domainComparison/Migration Testing/domain_differences.xlsx')
                 redFill = PatternFill(patternType='solid', fgColor=colors.Color(rgb='00FF0000'))
                 for pair in range(num_of_pairs):
                     print (pair)
@@ -124,34 +124,38 @@ def add_domain_level_sheet(old, new, dom):
                                 numTables = 0
                                 schemaNames = []
                                 tableNames = []
-                    for i in range(len(df_merged)):
-                        if df_merged['Asset Type'].iloc[i] == 'Schema':
-                            schemaNames.append(df_merged['Name'].iloc[i])
-                            numSchemas += 1
-                        if df_merged['Asset Type'].iloc[i] == 'Table':
-                            tableNames.append(df_merged['Name'].iloc[i])
-                            numTables += 1       
-                    if numSchemas == 0:
-                        schemaNames = pd.NA
-                        numSchemas = pd.NA
-                    else:
-                        schemaNames = str(schemaNames).replace("[", "").replace("]","")
-                    if numTables == 0:
-                        tableNames = pd.NA
-                        numTables = pd.NA
-                    else:
-                        tableNames = str(tableNames).replace("[", "").replace("]","")
-                excel_path.save(filename='C:/Users/RHS18/Documents/Collibra/Migration Testing/domain_differences.xlsx')
+                    print (df_merged)
+                    try:
+                        for i in range(len(df_merged)):
+                            if df_merged['Asset Type'].iloc[i] == 'Schema':
+                                schemaNames.append(df_merged['Name'].iloc[i])
+                                numSchemas += 1
+                            if df_merged['Asset Type'].iloc[i] == 'Table':
+                                tableNames.append(df_merged['Name'].iloc[i])
+                                numTables += 1       
+                        if numSchemas == 0:
+                            schemaNames = pd.NA
+                            numSchemas = pd.NA
+                        else:
+                            schemaNames = str(schemaNames).replace("[", "").replace("]","")
+                        if numTables == 0:
+                            tableNames = pd.NA
+                            numTables = pd.NA
+                        else:
+                            tableNames = str(tableNames).replace("[", "").replace("]","")
+                    except:
+                        continue
+                excel_path.save(filename='C:/Users/RHS18/Documents/gitHubSky/domainComparison/Migration Testing/domain_differences.xlsx')
         else:
             equals = {'Domain': ['Old Instance', 'New Instance'],
             'Result': ['Equal', 'Equal']
             }
             equalDF = pd.DataFrame(equals, columns = ['Domain', 'Result'])
-            book = openpyxl.load_workbook('domain_differences.xlsx')
+            book = openpyxl.load_workbook('Migration Testing/domain_differences.xlsx')
             if dom in book.sheetnames:
                 print ("sheet deleted")
                 book.remove(book[dom])
-            writer = pd.ExcelWriter('domain_differences.xlsx', engine='openpyxl')
+            writer = pd.ExcelWriter('Migration Testing/domain_differences.xlsx', engine='openpyxl')
             writer.book = book
             writer.sheets = dict((ws.title, ws) for ws in book.worksheets)
             equalDF.to_excel(writer, sheet_name=dom, index = False)
@@ -168,11 +172,11 @@ def add_domain_level_sheet(old, new, dom):
         'Result': ['Equal', 'Equal']
         }
         equalDF = pd.DataFrame(equals, columns = ['Domain', 'Result'])
-        book = openpyxl.load_workbook('domain_differences.xlsx')
+        book = openpyxl.load_workbook('Migration Testing/domain_differences.xlsx')
         if dom in book.sheetnames:
             print ("sheet deleted")
             book.remove(book[dom])
-        writer = pd.ExcelWriter('domain_differences.xlsx', engine='openpyxl')
+        writer = pd.ExcelWriter('Migration Testing/domain_differences.xlsx', engine='openpyxl')
         writer.book = book
         writer.sheets = dict((ws.title, ws) for ws in book.worksheets)
         equalDF.to_excel(writer, sheet_name=dom, index = False)
@@ -188,7 +192,7 @@ def add_domain_level_sheet(old, new, dom):
     print (result, numTested, rowsFailed, numSchemas, numTables, schemaNames, tableNames)
     return result, numTested, rowsFailed, numSchemas, numTables, schemaNames, tableNames
 
-path = r"C:/Users/RHS18/Documents/Collibra/Migration Testing/Inputs"
+path = r"C:/Users/RHS18/Documents/gitHubSky/domainComparison/Migration Testing/Inputs"
 domains = []
 for files in os.listdir(path):
     domains.append(files.split(" - ")[0])
@@ -228,7 +232,7 @@ summaryReport = {'Domain': domains,
 equalDF = pd.DataFrame(summaryReport, columns = ['Domain', 'Result', 'Number of rows tested', 'Rows Failed', 'New Schemas?', 'New Tables?', 'New Schema Names', 'New Table Names'])
 print (equalDF)
 width = equalDF.shape[1]
-book = openpyxl.load_workbook('domain_differences.xlsx')
+book = openpyxl.load_workbook('Migration Testing/domain_differences.xlsx')
 redFill = PatternFill(patternType='solid', fgColor=colors.Color(rgb='00FF0000'))
 greenFill = PatternFill(patternType='solid', fgColor=colors.Color(rgb='0000FF00'))
 currentSheet1 = book['Summary']
@@ -240,7 +244,7 @@ for res in range(len(equalDF)):
     elif equalDF['Result'].iloc[res] == 'PASS':
         for wid in range(width):
             currentSheet1.cell(row=res+2, column=wid+1).fill = greenFill
-writer = pd.ExcelWriter('domain_differences.xlsx', engine='openpyxl')
+writer = pd.ExcelWriter('Migration Testing/domain_differences.xlsx', engine='openpyxl')
 writer.book = book
 writer.sheets = dict((ws.title, ws) for ws in book.worksheets)
 equalDF.to_excel(writer, sheet_name= "Summary", index = False)
